@@ -1,0 +1,125 @@
+<html>
+	<head>
+		<meta charset="UTF-8"> 
+		<style>
+			* { box-sizing: border-box; }
+			
+			body {
+			  color: #d3d3d3;
+			  font: 12pt "Open Sans", Calibri, Arial, sans-serif;
+			  background-color: #fff;
+			  padding: 0;
+			  margin: 0;
+			}
+
+			#mynetwork {
+			  width: 100%;
+			  height: 100%;
+			  border: 1px solid #444444;
+			  background-color: #000;
+			}
+		</style>
+		
+		<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+	</head>
+	<body>
+		<div id="mynetwork"></div>
+		
+		<script>
+			var color = "gray";
+			var len = undefined;
+			
+			let nodes = [
+				{ id: 1, value: 5, label: "OPNT" },
+				{ id: 2, value: 3, label: "Parker Rodriguez" },
+				{ id: 3, value: 5, label: "Luis Martinez" },
+				{ id: 4, value: 15, label: "Medmen Enterprises Inc." },
+				{ id: 5, value: 5, label: "STAR Matter 486593" },
+				{ id: 6, value: 2, label: "Form D 345 10/31/2017" },
+				{ id: 7, value: 8, label: "Jessica Powers" },
+				{ id: 8, value: 5, label: "STAR Matter 7426523" },
+				{ id: 9, value: 3, label: "2923219" },
+				{ id: 10, value: 8, label: "Aurora Cannibas Inc."  },
+				{ id: 11, value: 5, label: "ACB" },
+				{ id: 12, value: 5, label: "Opiant Pharmaceuticals" },
+				{ id: 13, value: 2, label: "Jack Roberts" },
+				{ id: 14, value: 2, label: "Eli Martinelli" },
+				{ id: 15, value: 3, label: "Joints 'R' Us" },
+				{ id: 16, value: 5, label: "Eugene Mendel" },
+				{ id: 17, value: 4, label: "RCM filing 23556" },
+				{ id: 18, value: 5, label: "Harold Watkins" },
+				{ id: 19, value: 12, label: "Charles Schwab & Co. Inc. (5393)" },
+				{ id: 20, value: 6, label: "Apple" },
+				{ id: 21, value: 5, label: "IBM" }
+			];
+			
+			let edges = [
+                { from:  5, to:  3, value: 5, label: "mentions" },
+                { from:  5, to:  4, value: 2, label: "relates to" },
+                { from:  3, to:  4, value: 2, label: "employed by" },
+                { from:  6, to:  4, value: 1, label: "mentions" },
+                { from:  4, to:  1, value: 1, label: "contacts" },
+                { from:  4, to: 11, value: 1, label: "trades with" },
+                { from:  2, to:  4, value: 1, label: "employed by" },
+                { from:  2, to:  9, value: 1, label: "contacts" },
+                { from:  4, to: 10, value: 9, label: "owns" },
+                { from: 14, to: 10, value: 1, label: "employed by" },
+                { from: 13, to: 10, value: 1, label: "employed by" },
+                { from: 11, to: 10, value: 2, label: "trades with" },
+                { from:  8, to: 10, value: 1, label: "relates to" },
+                { from:  8, to: 12, value: 2, label: "mentions" },
+                { from:  7, to: 16, value: 3, label: "contacts" },
+                { from: 16, to: 19, value: 4, label: "employed by" },
+                { from: 19, to: 21, value: 5, label: "trades" },
+                { from: 12, to: 19, value: 1, label: "trades with" },
+                { from: 19, to: 20, value: 4, label: "trades" },
+                { from: 18, to: 20, value: 1, label: "owns stock in" },
+                { from: 19, to: 10, value: 7, label: "sued in 2017" },
+                { from:  4, to: 15, value: 1, label: "trades" },
+                { from: 18, to: 15, value: 1, label: "owns stock in" },
+                { from: 17, to: 19, value: 4, label: "references" },
+                { from: 17, to: 18, value: 1, label: "references" }
+			];
+			
+			// create a network
+			var container = document.getElementById("mynetwork");
+			console.log(container);
+			var data = {
+			  nodes: nodes,
+			  edges: edges,
+			};
+			var options = {
+			  nodes: {
+				shape: "dot",
+				font: {
+					size: 18,
+					face: "Open Sans",
+					color: "white",
+					strokeColor: "black",
+					strokeWidth: 8,
+				},
+				scaling: {
+					min: 4,
+					max: 40
+				},
+				borderWidth: 2,
+			  },
+			  edges: {
+				width: 2,
+				font: { 
+					size: 10,
+					align: "top",
+					face: "Open Sans",
+					color: "white",
+					strokeColor: "black",
+					strokeWidth: 8,
+				},
+				scaling: { label: {enabled: false } },
+				arrows: "to",
+			  },
+			};
+			
+			network = new vis.Network(container, data, options);
+		</script>
+	</body>
+</html>

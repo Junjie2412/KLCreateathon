@@ -1,0 +1,101 @@
+.nodeGraph {
+    float: left;
+    clear: none;
+}
+
+body {
+    margin: 0;
+}
+
+#header {
+    border-width: 0;
+    background: transparent;
+}
+
+#header-right-wrapper {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 271px);
+}
+
+finra-search-field {
+    margin-right: 19px;
+    flex-grow: 1;
+}
+finra-button {
+    margin-right: 13px;
+    cursor: pointer;
+}
+
+#profile-link {
+    display: inline-block;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+}
+.current-user-avatar {
+    width: 50px;
+    height: 50px;
+}
+#graph {
+    text-align: center;
+}
+svg {
+    background: #000;
+}
+
+.links line {
+    stroke: #0082d1;
+    stroke-opacity: 0.6;
+}
+
+.nodes circle {
+    cursor: pointer;
+    fill: #0082d1;
+}
+
+g.nodes > g:hover circle {
+    stroke: white;
+    stroke-width: 3px;
+}
+
+.nodes text {
+    font-family: "Open Sans", Calibri, Arial, sans-serif;
+    font-weight: bold;
+    fill: white;
+    cursor: pointer;
+    user-select: none;
+}
+
+.nodes text.shadow {
+    stroke: #000;
+    stroke-width: 5;
+}
+
+#person-details-popup {
+    position: fixed;
+    top: 112px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    background: white;
+    border-radius: 20px;
+    border: 5px solid #00456f;
+    padding: 20px;
+    font-family: "Open Sans";
+}
+#profile-image {
+    float: left;
+    border-radius: 50%;
+    width: 125px;
+    height: 125px;
+    margin-right: 15px;
+}
+.person-attr-label {
+    font-size: 8pt;
+    font-variant: small-caps;
+}
+div#profile-buttons-wrapper {
+    text-align: center;
+    margin-top: 10px;
+}
+.hide { display: none; }

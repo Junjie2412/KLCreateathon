@@ -1,0 +1,104 @@
+.searchBox {
+    width: 100%;
+    height: 50px;
+    float: left;
+    clear: none;
+    background-color: #e5e8ec;
+}
+
+.searchBox .search-container {
+    float: right;
+}
+
+.searchBox input[type=text] {
+    float: left;
+    padding: 6px;
+    margin: 8px 0 0 10px;
+    font-size: 17px;
+    border: none;
+}
+
+.searchBox p {
+    float: left;
+    padding: 12px 10px 4px 40px;
+    font-size: 17px;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.searchBox input[type=number] {
+    float: left;
+    padding: 6px;
+    margin-top: 8px;
+    font-size: 17px;
+    border: none;
+    width: 50px;
+}
+
+.searchList {
+    position: absolute;
+    color: black;
+    list-style-type: none;
+    width: 209px;
+    z-index: 1500;
+    background-color: white;
+    margin: 50px 0 0 10px;
+    padding: 0;
+}
+
+.searchList li {
+    padding: 4px 0px 4px 0px;
+    font-size: 17px;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.searchList li:hover {
+    background-color: lightgrey;
+    cursor: pointer;
+}
+
+.checkBox {
+    float: left;
+    padding: 6px;
+    margin: 8px 0 0 50px;
+    font-size: 17px;
+    border: none;
+}
+
+.checkBox Form.Group, Form.Check {
+    float: left;
+    padding: 6px;
+    margin: 8px 0 0 10px;
+    font-size: 17px;
+    border: none;
+}
+
+.dropdown {
+     float: left;
+     padding: 6px;
+     margin: 0 0 0 50px;
+     font-size: 17px;
+     border: none;
+ }
+
+.dropdown Form.Control {
+    border: none;
+    outline: none;
+}
+
+.label {
+    float: left;
+    margin: 13px 0 0 40px;
+    font-size: 17px;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.select {
+    float: left;
+    margin: 13px 0 0 15px;
+    font-size: 17px;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+}

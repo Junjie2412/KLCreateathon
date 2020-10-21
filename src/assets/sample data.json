@@ -1,0 +1,141 @@
+{
+    "nodes": [
+        {
+            "type": "person",
+            "name": "Carla"
+        },
+        {
+            "type": "person",
+            "name": "Kayla"
+        },
+		{
+            "type": "person",
+            "name": "Josh"
+        },
+		{
+            "type": "person",
+            "name": "Peter"
+        },
+		{
+            "type": "person",
+            "name": "Olivia"
+        },
+		{
+            "type": "person",
+            "name": "Chuchun"
+        },
+		{
+            "type": "person",
+            "name": "Mzati"
+        },
+		{
+            "type": "person",
+            "name": "Derrick"
+        },
+		{
+            "type": "person",
+            "name": "Graham"
+        },
+		{
+            "type": "person",
+            "name": "Jianbin"
+        },
+		{
+            "type": "person",
+            "name": "Junjie"
+        },
+		{
+            "type": "teampart",
+            "name": "Presentation"
+        },
+		{
+            "type": "teampart",
+            "name": "Business"
+        },
+		{
+            "type": "teampart",
+            "name": "Technology"
+        },
+		{
+            "type": "project",
+            "name": "Createathon"
+        }
+    ],
+    "links": [
+        {
+            "source": "Carla",
+            "target": "Presentation",
+			"label": "member"
+        },
+        {
+            "source": "Presentation",
+            "target": "Createathon",
+			"label": "team"
+        },
+        {
+            "source": "Kayla",
+            "target": "Business",
+			"label": "member"
+        },
+        {
+            "source": "Josh",
+            "target": "Business",
+			"label": "member"
+        },
+		{
+            "source": "Peter",
+            "target": "Business",
+			"label": "member"
+        },
+        {
+            "source": "Chuchun",
+            "target": "Business",
+			"label": "member"
+        },
+        {
+            "source": "Business",
+            "target": "Createathon",
+			"label": "team"
+        },
+        {
+            "source": "Olivia",
+            "target": "Technology",
+			"label": "member"
+        },
+        {
+            "source": "Chuchun",
+            "target": "Technology",
+			"label": "member"
+        },
+        {
+            "source": "Derrick",
+            "target": "Technology",
+			"label": "member"
+        },
+        {
+            "source": "Jianbin",
+            "target": "Technology",
+			"label": "member"
+        },
+        {
+            "source": "Junjie",
+            "target": "Technology",
+			"label": "member"
+        },
+        {
+            "source": "Graham",
+            "target": "Technology",
+			"label": "member"
+        },
+        {
+            "source": "Mzati",
+            "target": "Technology",
+			"label": "member"
+        },
+		{
+            "source": "Technology",
+            "target": "Createathon",
+			"label": "team"
+        }
+    ]
+}

@@ -1,0 +1,246 @@
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        
+        #header {
+            border-width: 0;
+            background: transparent;
+        }
+        
+        #header-right-wrapper {
+            display: flex;
+            align-items: center;
+            width: calc(100% - 271px);
+        }
+
+        finra-search-field {
+            margin-right: 19px;
+            flex-grow: 1;
+        }
+        finra-button {
+            margin-right: 13px;
+            cursor: pointer;
+        }
+
+        #profile-link {
+            display: inline-block;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .current-user-avatar {
+            width: 50px;
+            height: 50px;
+        }
+        #graph {
+            text-align: center;
+        }
+        svg {
+            background: linear-gradient(45deg, #5bbaff, transparent),
+                        linear-gradient(#a6ffea ,transparent);
+        }
+        
+        .links line {
+            stroke: #0082d1;
+            stroke-opacity: 0.6;
+        }
+
+        .nodes circle {
+            stroke: #0082d1;
+            stroke-width: 3px;
+        }
+
+        .nodes circle.person {
+            cursor: pointer;
+        }
+        #person-details-popup {
+            position: fixed;
+            top: 112px;
+            left: 50%;
+            transform: translate(-50%, 0%);
+            background: white;
+            border-radius: 20px;
+            border: 5px solid #00456f;
+            padding: 20px;
+            font-family: "Open Sans";
+        }
+        #profile-image {
+            float: left;
+            border-radius: 50%;
+            width: 125px;
+            height: 125px;
+            margin-right: 15px;
+        }
+        .person-attr-label {
+            font-size: 8pt;
+			font-variant: small-caps;
+        }
+        div#profile-buttons-wrapper {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .hide { display: none; }
+    </style>
+</head>
+<body>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js"></script> -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <finra-header id="header" text="1000 FACES">
+        <div id="header-right-wrapper" slot="right">
+            <finra-search-field placeholder="search"></finra-search-field>
+            <finra-button theme="secondary" size="sm" onclick="alert('This would take you to the My Team page.')">My Team</finra-button>
+            <a id="profile-link" onclick="alert('This would take you to your profile page within 1000 Faces.')"><img class="current-user-avatar" src="avatar.jpg"/></a>
+        </div>
+    </finra-header>
+
+    <div id="graph"></div>
+
+    <div id="person-details-popup" class="hide">
+        <img id="profile-image" src="placeholder.jpg" />
+        <h2 id="profile-header">Placeholder Name</h2>
+        <div id="profile-details"></div>
+        <div id="profile-buttons-wrapper">
+            <finra-button theme="primary" size="md" onclick="addToTeam()">Add to Team</finra-button>
+            <finra-button theme="primary" size="md" onclick="closePopup()">Close</finra-button>
+        </div>
+    </div>
+
+    <script>
+        let vis = d3.select("#graph")
+                    .append("svg");
+
+        let w = 1400, //1400
+            h = 600; //600
+        vis.attr("width", w)
+           .attr("height", h);
+        
+		let nodes = [
+			{ "type": "person", "name": "Carla" },
+			{ "type": "person", "name": "Kayla" },
+			{ "type": "person", "name": "Josh" },
+			{ "type": "person", "name": "Peter" },
+			{ "type": "person", "name": "Olivia" },
+			{ "type": "person", "name": "Chuchun" },
+			{ "type": "person", "name": "Mzati" },
+			{ "type": "person", "name": "Derrick" },
+			{ "type": "person", "name": "Graham" },
+			{ "type": "person", "name": "Jianbin" },
+			{ "type": "person", "name": "Junjie" },
+			{ "type": "teampart", "name": "Presentation" },
+			{ "type": "teampart", "name": "Business" },
+			{ "type": "teampart", "name": "Technology" },
+			{ "type": "project", "name": "Createathon" }
+		];
+		
+		let links = [
+			{ "source": "Carla", "target": "Presentation", "label": "member" },
+			{ "source": "Presentation", "target": "Createathon", "label": "team" },
+			{ "source": "Kayla", "target": "Business", "label": "member" },
+			{ "source": "Josh", "target": "Business", "label": "member" },
+			{ "source": "Peter", "target": "Business", "label": "member" },
+			{ "source": "Chuchun", "target": "Business", "label": "member" },
+			{ "source": "Business", "target": "Createathon", "label": "team" },
+			{ "source": "Olivia", "target": "Technology", "label": "member" },
+			{ "source": "Chuchun", "target": "Technology", "label": "member" },
+			{ "source": "Derrick", "target": "Technology", "label": "member" },
+			{ "source": "Jianbin", "target": "Technology", "label": "member" },
+			{ "source": "Junjie", "target": "Technology", "label": "member" },
+			{ "source": "Graham", "target": "Technology", "label": "member" },
+			{ "source": "Mzati", "target": "Technology", "label": "member" },
+			{ "source": "Technology", "target": "Createathon", "label": "team" }
+		];
+		
+        let collide = d3.forceCollide().radius(80).strength(0.2);
+        let linkforce = d3.forceLink(links).id(function(d) { return d.name; }).distance(0);
+
+        let simulation = d3.forceSimulation().nodes(nodes);
+        simulation
+            .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(w/2, h/2))
+            .force("collision", collide)
+            .force("links", linkforce);
+        
+        let rf = 35; // radius of face
+        let rh = 25; // radius of hub
+        let o = 20;  // offset from edge of SVG
+
+        let pattern = vis.append("defs")
+                    .selectAll("pattern")
+                    .data(nodes)
+                    .enter().append("pattern")
+                        .attr("id", function(d) { return d.name; })
+                        .attr("patternUnits", "userSpaceOnUse")
+                        .attr("height", function(d) { return 2*rad(d); })
+                        .attr("width", function(d) { return 2*rad(d); });
+
+        let image = pattern.append("image")
+                            .attr("height", function(d) { return 2*rad(d); })
+                            .attr("width", function(d) { return 2*rad(d); })
+                            .attr("href", function(d) { return d.url; });
+
+        let link = vis.append("g")
+                    .attr("class", "links")
+                    .selectAll("line")
+                    .data(links)
+                    .enter().append("line")
+                        .attr("stroke-width", 2); 
+        
+        let node = vis.append("g")
+                    .attr("class", "nodes")
+                    .selectAll("circle")
+                    .data(nodes)
+                    .enter()
+                    .append("circle")
+                        .attr('class', function(d) { return d.type; })
+                        .attr("r", function(d) { return rad(d); })
+                        .attr("fill", function(d) { return "url(#" + d.name + ")"; })
+                        .attr("onclick", function(d) { return "getPersonDetails('" + d.id + "')"; });
+
+        function tickActions() {
+            node
+                .attr("cx", function(d) { return d.x = Math.max(rad(d) + o, Math.min(w - rad(d) - o, d.x)); })
+                .attr("cy", function(d) { return d.y = Math.max(rad(d) + o, Math.min(h - rad(d) - o, d.y)); });
+            pattern
+                .attr("x", function(d) { return d.x - rad(d); })
+                .attr("y", function(d) { return d.y - rad(d); });
+            link
+                .attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+        }
+        simulation.on("tick", tickActions);
+
+        function rad(d) { return d.type == "person" ? rf : rh; }
+        
+        function doMyThing(arg) {
+            console.log(arg);
+        }
+    </script>
+    <script>
+        window.finra = {
+          iconPath: './assets/icons'
+        };
+    </script>
+    <script src="ctl-common.js"></script>
+    <script src="person_popup.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!--
+        how to get the data out of the json......... I need to read about binding data
+        https://bost.ocks.org/mike/circles/
+        http://www.puzzlr.org/force-directed-graph-minimal-working-example/
+    -->
+</body>
+
+<!-- TO DO
+1. add labels to nodes and edges
+2. add arrowheads
+give business side a spreadsheet to fill out that I can transform into json
+3. remove (comment out) image mapping
+4. add color for each circle
+5. click to toggle color
+6. search field: search through node graph for nodes that match search term, highlight them
+-->
