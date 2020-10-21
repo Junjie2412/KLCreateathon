@@ -32,10 +32,12 @@ export const editNumConnections = (numConnections) => {
     }
 };
 
-export const searchVis = (searchTerm, numConnections) => {
+export const searchVis = (searchTerm, numConnections, nodesList, edgesList) => {
     return {
         type: actionTypes.SEARCH_VIS,
         searchTerm: searchTerm,
+        nodesList: nodesList,
+        edgesList: edgesList,
         numConnections: numConnections
     }
 };
@@ -86,6 +88,7 @@ export const fetchData = () => {
         dispatch(fetchDataStart());
         axios.get(links.FETCH_DATA_LOCAL)
             .then(response => {
+                console.log(response);
                 const nodes = [];
                 const edges = [];
                 for (let node in response.data.nodes) {

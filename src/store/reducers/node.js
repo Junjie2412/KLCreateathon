@@ -1,4 +1,4 @@
-import {nodesData, linksData, nodesDataVis, linksDataVis} from '../../shared/data';
+import {nodesData, linksData/*, nodesDataVis, linksDataVis*/} from '../../shared/data';
 import * as actionTypes from '../actions/actionTypes';
 import {shuffleArray, updateObject, d3Create} from '../../shared/utility';
 
@@ -9,10 +9,10 @@ const initialState = {
     searchedLinks: [],
     searchValue: "",
     numConnections: 1,
-    nodesVis: JSON.parse(JSON.stringify(nodesDataVis)),
-    edgesVis: JSON.parse(JSON.stringify(linksDataVis)),
-    //nodesVis: [],
-    //edgesVis: [],
+    //nodesVis: JSON.parse(JSON.stringify(nodesDataVis)),
+    //edgesVis: JSON.parse(JSON.stringify(linksDataVis)),
+    nodesVis: [],
+    edgesVis: [],
     searchedNodesVis: [],
     searchedEdgesVis: [],
     showNodes: true,
@@ -102,7 +102,7 @@ const searchVis = (state, action) => {
     let newSearchedEdgesVis = [];
     let targets = [];
 
-    let searchedNodeVis = nodesDataVis.find(node => node.label===action.searchTerm);
+    let searchedNodeVis = action.nodesList.find(node => node.label===action.searchTerm);
 
     console.log(searchedNodeVis);
 
@@ -113,10 +113,10 @@ const searchVis = (state, action) => {
         if (action.numConnections === "" || action.numConnections < 1) {
             action.numConnections = 1;
         }
-        let numLoops = action.numConnections < nodesDataVis.length ? action.numConnections : nodesDataVis.length;
+        let numLoops = action.numConnections < action.nodesList.length ? action.numConnections : action.nodesList.length;
 
         for (let i = 0; i < numLoops; i++) {
-            for (let link of linksDataVis){
+            for (let link of action.edgesList){
                 if (!newSearchedEdgesVis.includes(link)) {
                     if (targets.includes(link.to)) {
                         newSearchedEdgesVis.push(link);
@@ -135,7 +135,7 @@ const searchVis = (state, action) => {
                 }
             }
 
-            for (let node of nodesDataVis){
+            for (let node of action.nodesList){
                 if (targets.includes(node.id) && !newSearchedNodesVis.find(n => n.id === node.id)) {
                     newSearchedNodesVis.push(node);
                 }

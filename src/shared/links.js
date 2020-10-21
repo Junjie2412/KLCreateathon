@@ -1,1 +1,1 @@
-export const FETCH_DATA_LOCAL = "http://10.162.5.112/graph/search/firm";
+export const FETCH_DATA_LOCAL = "http://10.162.5.112/graph/search/person?q=RICHARD%20FRUEH";

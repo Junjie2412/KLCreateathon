@@ -3,6 +3,7 @@ import './Search.css';
 import {connect} from 'react-redux';
 import * as actions from '../../store/actions/index';
 import {Form} from 'react-bootstrap';
+import Aux from '../../hoc/Auxiliary';
 
 class Search extends Component {
 
@@ -13,7 +14,7 @@ class Search extends Component {
     search = (event) => {
         event.preventDefault();
         this.props.onClearVis();
-        this.props.onSearchVis(this.props.searchValue, this.props.numConnections);
+        this.props.onSearchVis(this.props.searchValue, this.props.numConnections, this.props.nodesVis, this.props.edgesVis);
         this.closeSearchList();
     };
 
@@ -32,7 +33,7 @@ class Search extends Component {
         event.preventDefault();
         this.props.onClearVis();
         this.props.onEditSearch(search);
-        this.props.onSearchVis(search, this.props.numConnections);
+        this.props.onSearchVis(search, this.props.numConnections, this.props.nodesVis, this.props.edgesVis);
         this.closeSearchList();
     };
 
@@ -81,6 +82,8 @@ class Search extends Component {
 
         return (
                 <div className={"searchBox"} id={"searchBox"} onClick={this.closeSearchList}>
+                    {!this.props.loading ?
+                    <Aux>
                     <form action="/action_page.php" onSubmit={(event) => this.search(event)}>
                         <input type="text" autoComplete="off" placeholder="Search.." name="search" value={this.props.searchValue} onChange={(event) => this.editSearch(event)}/>
 
@@ -107,7 +110,8 @@ class Search extends Component {
                     <label className={"label"}>Node Font Size: </label>
                     <select value={this.props.currentFontSize} className={"select"} onChange={(event) => this.changeFontSize(event)}>
                         {options}
-                    </select>
+                        </select>
+                    </Aux> : <h1>Loading...</h1>}
                 </div>
 
         );
@@ -117,6 +121,7 @@ class Search extends Component {
 const mapStateToProps = state => {
     return {
         nodesVis: state.nodes.nodesVis,
+        edgesVis: state.nodes.edgesVis,
         searchedNodesVis: state.nodes.searchedNodesVis,
         searchedEdgesVis: state.nodes.searchedEdgesVis,
         searchValue: state.nodes.searchValue,
@@ -125,7 +130,8 @@ const mapStateToProps = state => {
         showNodes: state.nodes.showNodes,
         showEdges: state.nodes.showEdges,
         currentFontSize: state.nodes.currentFontSize,
-        fontOptions: state.nodes.fontOptions
+        fontOptions: state.nodes.fontOptions,
+        loading: state.nodes.loading
     }
 };
 
@@ -135,7 +141,7 @@ const mapDispatchToProps = dispatch => {
         //onSearch: (searchTerm, numConnections) => dispatch( actions.search (searchTerm, numConnections)),
         onD3Update: (links, nodes) => dispatch( actions.d3Update(links, nodes)),
         onEditNumConnections: (links, nodes) => dispatch( actions.editNumConnections(links, nodes)),
-        onSearchVis: (searchTerm, numConnections) => dispatch( actions.searchVis(searchTerm, numConnections)),
+        onSearchVis: (searchTerm, numConnections, nodesList, edgesList) => dispatch( actions.searchVis(searchTerm, numConnections, nodesList, edgesList)),
         onClearVis: () => dispatch( actions.clearVis()),
         onShowNodes: (showNodes) => dispatch(actions.showNodes(showNodes)),
         onShowEdges: (showEdges) => dispatch(actions.showEdges(showEdges)),

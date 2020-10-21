@@ -13,8 +13,6 @@ class VisGraph extends Component {
         this.props.onFetchData();
     }
 
-
-
     render() {
 
         let options = {
@@ -71,7 +69,12 @@ class VisGraph extends Component {
         };
 
         let nodesList = this.props.searchedNodesVis.map(node => (
-            <Node key={node.id} id={node.id} label={node.label} value={node.value }/>
+            <Node
+                key={node.id}
+                id={node.id}
+                label={node.label}
+                value={node.value }
+            />
         ));
 
         let edgesList = this.props.searchedEdgesVis.map(edge => (
