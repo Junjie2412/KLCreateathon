@@ -1,16 +1,78 @@
 * { box-sizing: border-box; }
 
-.graphcontainer {
+body {
     color: #d3d3d3;
     font: 12pt "Open Sans", Calibri, Arial, sans-serif;
-    background-color: #fff;
+    background-color: black;
     padding: 0;
     margin: 0;
 }
 
 #mynetwork {
-    width: 100%;
-    height: 100%;
-    border: 1px solid #444444;
+    margin-top: 0;
+    width: 60%;
+    /*minus 50px for the Navbar*/
+    height: calc(100% - 50px);
     background-color: #000;
+    display: inline-block;
+    position: absolute;
+    left: 20%;
+    top: 50px;
+}
+
+.panel {
+    width: 20%;
+    /*minus 50px for the Navbar*/
+    height: calc(100% - 50px);
+    background-color: #444;
+    display: inline-block;
+    position: absolute;
+    top: 50px;
+    overflow-y: scroll;
+}
+
+.panel a { color: lightblue; }
+.panel a:visited { color: thistle; }
+
+#edgepanel {
+    /*minus px for the Search bar*/
+    height: calc(100% - 264px);
+    top: 264px;
+    left: 0;
+}
+
+#nodepanel {
+    left: 80%;
+}
+
+.panelcontainer {
+    width: 100%;
+    position: relative;
+    padding: 0;
+}
+
+#edgecontainer {
+
+}
+
+#edgecontainer ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+#edgecontainer li {
+    margin: 1px 0;
+    border-bottom: 1px solid #bbb;
+    padding: 10px 20px;
+    color: white
+}
+
+#edgecontainer li:hover {
+    background-color: #6c757d;
+    cursor: pointer;
+}
+
+#edgecontainer li:active {
+    background-color: #6c757d;
+    cursor: pointer;
 }

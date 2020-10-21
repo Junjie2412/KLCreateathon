@@ -10,5 +10,6 @@ export {
     changeFontSize,
     fetchData,
     fetchDataStart,
-    fetchDataSuccess
+    fetchDataSuccess,
+    selectEdgeFromList
 } from './node';

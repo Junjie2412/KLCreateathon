@@ -6,15 +6,21 @@ import {Form} from 'react-bootstrap';
 
 class Search extends Component {
 
+    state = {
+        showList: false
+    };
+
     search = (event) => {
         event.preventDefault();
         this.props.onClearVis();
         this.props.onSearchVis(this.props.searchValue, this.props.numConnections);
+        this.closeSearchList();
     };
 
     editSearch = (event) => {
         event.preventDefault();
         this.props.onEditSearch(event.target.value);
+        this.setState({showList: true});
     };
 
     editNumConnections = (event) => {
@@ -22,11 +28,16 @@ class Search extends Component {
         this.props.onEditNumConnections(event.target.value);
     };
 
-    clickDropDown = (event, search) => {
+    clickSearchDropDown = (event, search) => {
         event.preventDefault();
         this.props.onClearVis();
         this.props.onEditSearch(search);
         this.props.onSearchVis(search, this.props.numConnections);
+        this.closeSearchList();
+    };
+
+    closeSearchList = () => {
+        this.setState({showList: false});
     };
 
     showNodes = () => {
@@ -56,7 +67,7 @@ class Search extends Component {
             <li
                 key={node.id}
                 style={{display: node.label.toLowerCase().includes(this.props.searchValue.toLowerCase()) ? "block" : "none"}}
-                onClick={(event) => this.clickDropDown(event, node.label)}
+                onClick={(event) => this.clickSearchDropDown(event, node.label)}
             >
                 {node.label}
             </li>
@@ -69,11 +80,11 @@ class Search extends Component {
         ));
 
         return (
-                <div className={"searchBox"}>
+                <div className={"searchBox"} id={"searchBox"} onClick={this.closeSearchList}>
                     <form action="/action_page.php" onSubmit={(event) => this.search(event)}>
                         <input type="text" autoComplete="off" placeholder="Search.." name="search" value={this.props.searchValue} onChange={(event) => this.editSearch(event)}/>
 
-                        <ul style={{"display":this.props.searchValue.length > 0 ? "block" : "none"}} className={"searchList"}>
+                        <ul style={{"display":this.state.showList ? "block" : "none"}} className={"searchList"}>
                             {searchList}
                         </ul>
                         <p>Connections: </p>
@@ -83,13 +94,13 @@ class Search extends Component {
 
                     <Form className={"checkBox"}>
                         <Form.Group controlId="showNodesSwitch">
-                            <Form.Check type="switch" checked={this.props.showEdges} onChange={this.showEdges} label={"Show pointer labels"} />
+                            <Form.Check className="formLabel" type="switch" checked={this.props.showEdges} onChange={this.showEdges} label={"Show pointer labels"} />
                         </Form.Group>
                     </Form>
 
                     <Form className={"checkBox"}>
                         <Form.Group controlId="showEdgesSwitch">
-                            <Form.Check type="switch" checked={this.props.showNodes} onChange={this.showNodes} label={"Show node labels"} />
+                            <Form.Check className="formLabel" type="switch" checked={this.props.showNodes} onChange={this.showNodes} label={"Show node labels"} />
                         </Form.Group>
                     </Form>
 

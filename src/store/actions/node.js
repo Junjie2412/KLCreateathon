@@ -98,7 +98,16 @@ export const fetchData = () => {
                         ...response.data.edges[edge]
                     })
                 }
+                console.log(nodes);
+                console.log(edges);
                 dispatch(fetchDataSuccess(nodes, edges));
             })
+    }
+};
+
+export const selectEdgeFromList = (selectedEdge) => {
+    return {
+        type: actionTypes.SELECT_EDGE_FROM_LIST,
+        selectedEdge: selectedEdge
     }
 };

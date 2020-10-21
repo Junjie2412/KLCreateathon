@@ -9,17 +9,18 @@ const initialState = {
     searchedLinks: [],
     searchValue: "",
     numConnections: 1,
-    //nodesVis: JSON.parse(JSON.stringify(nodesDataVis)),
-    //edgesVis: JSON.parse(JSON.stringify(linksDataVis)),
-    nodesVis: [],
-    edgesVis: [],
+    nodesVis: JSON.parse(JSON.stringify(nodesDataVis)),
+    edgesVis: JSON.parse(JSON.stringify(linksDataVis)),
+    //nodesVis: [],
+    //edgesVis: [],
     searchedNodesVis: [],
     searchedEdgesVis: [],
     showNodes: true,
     showEdges: true,
     currentFontSize: "Large",
     fontOptions: ["Small", "Medium", "Large"],
-    loading: false
+    loading: false,
+    selectedEdge: ""
 };
 
 const search = (state, action) => {
@@ -188,6 +189,12 @@ const fetchDataSuccess = (state, action) => {
     })
 };
 
+const selectEdgeFromList = (state, action) => {
+    return updateObject(state, {
+        selectedEdge: action.selectedEdge
+    })
+};
+
 const reducer = ( state = initialState, action ) => {
     switch(action.type) {
         case actionTypes.SEARCH: return search(state, action);
@@ -201,6 +208,7 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.CHANGE_FONT_SIZE: return changeFontSize(state, action);
         case actionTypes.FETCH_DATA_START: return fetchDataStart(state, action);
         case actionTypes.FETCH_DATA_SUCCESS: return fetchDataSuccess(state, action);
+        case actionTypes.SELECT_EDGE_FROM_LIST: return selectEdgeFromList(state, action);
         default:
             return state;
     }

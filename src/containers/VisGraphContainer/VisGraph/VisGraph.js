@@ -4,12 +4,16 @@ import connect from "react-redux/es/connect/connect";
 import './VisGraph.css';
 import { Network, Node, Edge } from 'react-vis-network';
 import * as actions from '../../../store/actions/index';
+import Search from '../../../components/Search/Search';
+import ReactHtmlParser from 'react-html-parser';
 
 class VisGraph extends Component {
 
     componentDidMount() {
         this.props.onFetchData();
     }
+
+
 
     render() {
 
@@ -22,7 +26,13 @@ class VisGraph extends Component {
                     color: "white",
                     strokeColor: "black",
                     strokeWidth: 8,
-                },
+                },/*
+                icon: {
+                    face: "'Font Awesome 5 Free'",
+                    weight: "900", // Font Awesome 5 doesn't work properly unless bold.
+                    code: "\uf1ad",
+                    size: 50
+                },*/
                 scaling: {
                     min: 4,
                     max: 40
@@ -52,24 +62,55 @@ class VisGraph extends Component {
             manipulation: {
                 deleteNode: true,
                 deleteEdge: true
+            },
+            physics: {
+                enabled: true,
+                solver: "repulsion", // I found this solver displayed better than the default
+                minVelocity: 0.05 // I thought the default value made the graph "screech to a halt" unnaturally so I lowered it slightly
             }
         };
 
         let nodesList = this.props.searchedNodesVis.map(node => (
-            <Node key={node.id} id={node.id} label={node.label} value={node.value} />
+            <Node key={node.id} id={node.id} label={node.label} value={node.value }/>
         ));
 
         let edgesList = this.props.searchedEdgesVis.map(edge => (
-            <Edge key={edge.id} id = {edge.id} label={edge.label} to={edge.to} from={edge.from} value={edge.value}/>
+            <Edge
+                key={edge.id}
+                id = {edge.id}
+                label={edge.label}
+                to={edge.to}
+                from={edge.from}
+                value={edge.value}
+                color={edge.id===this.props.selectedEdge ? {color:"white"} : ""}
+                font={edge.id===this.props.selectedEdge ? {strokeColor:"#6c757d"} : ""}
+            />
         ));
 
+        let edgeDescriptions = this.props.searchedEdgesVis.map(edge => (
+            <li onClick={() => this.props.onSelectEdgeFromList(edge.id)} style={{backgroundColor : edge.id===this.props.selectedEdge ? "#818d96" : ""}}>{ReactHtmlParser(edge.description)}</li>
+            )
+        );
         return (
-            <div id={"mynetwork"}>
-                <Network
-                    options={options}>
-                    {nodesList}
-                    {edgesList}
-                </Network>
+            <div>
+                <Search/>
+                <div id="edgepanel" className="panel">
+                    <div id="edgecontainer" className="panelcontainer">
+                        <ul>
+                            {edgeDescriptions}
+                        </ul>
+                    </div>
+                </div>
+                <div id={"mynetwork"}>
+                    <Network
+                        options={options}>
+                        {nodesList}
+                        {edgesList}
+                    </Network>
+                </div>
+                <div id="nodepanel" className="panel">
+                    <div id="nodecontainer" className="panelcontainer"></div>
+                </div>
             </div>
         )
     }
@@ -84,13 +125,15 @@ const mapStateToProps = state => {
         searchedEdgesVis: state.nodes.searchedEdgesVis,
         showNodes: state.nodes.showNodes,
         showEdges: state.nodes.showEdges,
-        currentFontSize: state.nodes.currentFontSize
+        currentFontSize: state.nodes.currentFontSize,
+        selectedEdge: state.nodes.selectedEdge
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onFetchData: () => dispatch(actions.fetchData())
+        onFetchData: () => dispatch(actions.fetchData()),
+        onSelectEdgeFromList: (edge) => dispatch(actions.selectEdgeFromList(edge))
     };
 };
 

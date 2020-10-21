@@ -16,7 +16,7 @@ class navbar extends Component {
             <Aux>
                 <div>
                     <nav className='topnav'>
-                        <button className={"menu"}>Joint Operation</button>
+                        <button className={"menu"}>FinWatch</button>
                     </nav>
                 </div>
             </Aux>

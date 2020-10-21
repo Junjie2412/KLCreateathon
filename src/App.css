@@ -3,4 +3,5 @@
   height: 100vh;
   text-align: center;
   background-color: #e5e8ec;
+  overflow-y: hidden;
 }

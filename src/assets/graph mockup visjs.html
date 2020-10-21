@@ -13,82 +13,753 @@
 			}
 
 			#mynetwork {
-			  width: 100%;
+			  width: 60%;
 			  height: 100%;
-			  border: 1px solid #444444;
 			  background-color: #000;
+			  display: inline-block;
+			  position: absolute;
+			  left: 20%;
 			}
+			
+			.panel {
+				width: 20%;
+				height: 100%;
+				background-color: #444;
+				display: inline-block;
+				position: absolute;
+				top: 0;
+				overflow-y: scroll;
+			}
+			
+			.panel a { color: lightblue; }
+			.panel a:visited { color: thistle; }
+			
+			#edgepanel {
+				left: 0;
+			}
+			
+			#nodepanel {
+				left: 80%;
+			}
+			
+			.panelcontainer {
+				width: 100%;
+				position: relative;
+				padding: 0;
+			}
+			
+			#edgecontainer {
+				
+			}
+			
+			#edgecontainer ul {
+				padding: 0;
+				list-style-type: none;
+			}
+			
+			#edgecontainer li {
+				margin: 1px 0;
+				border-bottom: 1px solid #bbb;
+				padding: 10px 20px;
+			}
+			
 		</style>
 		
 		<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	</head>
 	<body>
-		<div id="mynetwork"></div>
+		<!-- NOTE: This must all be on one line or the browser will add whitespace between the elements! -->
+		<div id="edgepanel" class="panel"><div id="edgecontainer" class="panelcontainer"></div></div><div id="mynetwork"></div><div id="nodepanel" class="panel"><div id="nodecontainer" class="panelcontainer"></div></div>
+		
+		<!--
+		edgepanel = side panel where edge information is displayed (basically the graph data in list form)
+		nodepanel = side panel where detailed information will display about a node if the user selects it
+		panel = wrapper object
+		panelcontainer = container object inside the wrapper where the actual stuff will go
+		This two-layer system is necessary so each panel will have its own scroll bar.  I think.
+		-->
 		
 		<script>
 			var color = "gray";
 			var len = undefined;
 			
-			let nodes = [
-				{ id: 1, value: 5, label: "OPNT" },
-				{ id: 2, value: 3, label: "Parker Rodriguez" },
-				{ id: 3, value: 5, label: "Luis Martinez" },
-				{ id: 4, value: 15, label: "Medmen Enterprises Inc." },
-				{ id: 5, value: 5, label: "STAR Matter 486593" },
-				{ id: 6, value: 2, label: "Form D 345 10/31/2017" },
-				{ id: 7, value: 8, label: "Jessica Powers" },
-				{ id: 8, value: 5, label: "STAR Matter 7426523" },
-				{ id: 9, value: 3, label: "2923219" },
-				{ id: 10, value: 8, label: "Aurora Cannibas Inc."  },
-				{ id: 11, value: 5, label: "ACB" },
-				{ id: 12, value: 5, label: "Opiant Pharmaceuticals" },
-				{ id: 13, value: 2, label: "Jack Roberts" },
-				{ id: 14, value: 2, label: "Eli Martinelli" },
-				{ id: 15, value: 3, label: "Joints 'R' Us" },
-				{ id: 16, value: 5, label: "Eugene Mendel" },
-				{ id: 17, value: 4, label: "RCM filing 23556" },
-				{ id: 18, value: 5, label: "Harold Watkins" },
-				{ id: 19, value: 12, label: "Charles Schwab & Co. Inc. (5393)" },
-				{ id: 20, value: 6, label: "Apple" },
-				{ id: 21, value: 5, label: "IBM" }
+			// nodes_full and edges_full represent the data received from the back end.
+			// we may redraw the graph later with a subset of this data, but we do not change nodes_full and edges_full.
+			// this is so we can always go back to the full graph if we want.
+			
+			let nodes_full = [
+				{
+					id: 1,			// id number, for the edges graph to reference
+					value: 5,		// fatness of node
+					label: "OPNT",	// friendly name for node
+					type: "firm",	// some context
+					info: [			// outside resources relevant to the node
+						{
+							name: "4503",					// name of outside resource
+							quantity: 5,					// number of relevant findings
+							url: "https://www.finra.org",	// how to get there from here
+						},
+						{
+							name: "CRD Rep Disclosures",
+							quantity: 2,
+							url: "https://www.finra.org",
+						},
+						{
+							name: "Form D",
+							quantity: 1,
+							url: "https://www.finra.org",
+						},
+					]
+				},
+				
+				{
+					id: 4,
+					value: 15,
+					label: "Medmen Enterprises Inc.",
+					type: "firm",
+					info: [
+							{
+								name: "4503",
+								quantity: 31,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Arbitration Awards",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 17,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 6,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Formal Complaints",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 19,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 98,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 19,
+					value: 12,
+					label: "Charles Schwab & Co. Inc.",
+					type: "firm",
+					info: [
+							{
+								name: "4503",
+								quantity: 56,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Arbitration Awards",
+								quantity: 19,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "AWCs",
+								quantity: 5,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 145,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Decisions",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Disciplinary Actions",
+								quantity: 5,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Dispute Res. Cases",
+								quantity: 12,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 41,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Formal Complaints",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NAC Appellate Briefs",
+								quantity: 4,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NAC Appellate Decisions",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "OAD Memos",
+								quantity: 8,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "OHO Orders",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Outcome Memos",
+								quantity: 16,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 76,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "RAD Firm Regulatory Notes",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "RAD Rep Regulatory Notes",
+								quantity: 28,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Senior Helpline",
+								quantity: 9,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Small Firm Helpline",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 285,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 11,
+					value: 5,
+					label: "ACB",
+					type: "firm",
+					info: [
+							{
+								name: "4503",
+								quantity: 8,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Arbitration Awards",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 12,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 77,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 2,
+					value: 3,
+					label: "Parker Rodriguez",
+					type: "person",
+					info: [
+							{
+								name: "4503",
+								quantity: 16,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 8,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 43,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 3,
+					value: 5,
+					label: "Luis Martinez",
+					type: "person",
+					info: [
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 4,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 3,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 63,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 7,
+					value: 8,
+					label: "Jessica Powers",
+					type: "person",
+					info: [
+							{
+								name: "STAR Matters",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 13,
+					value: 2,
+					label: "Jack Roberts",
+					type: "person",
+					info: [
+							{
+								name: "Formal Complaints",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 14,
+					value: 2,
+					label: "Eli Martinelli",
+					type: "person",
+					info: [
+							{
+								name: "Arbitration Awards",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 12,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 16,
+					value: 5,
+					label: "Eugene Mendel",
+					type: "person",
+					info: [
+							{
+								name: "4503",
+								quantity: 4,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 38,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 29,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Formal Complaints",
+								quantity: 3,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 15,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 146,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 18,
+					value: 5,
+					label: "Harold Watkins",
+					type: "person",
+					info: [
+							{
+								name: "4503",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 10,
+					value: 8,
+					label: "Aurora Chemicals Inc.",
+					type: "company",
+					info: [
+							{
+								name: "4503",
+								quantity: 3,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Arbitration Awards",
+								quantity: 4,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 10,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 45,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Formal Complaints",
+								quantity: 5,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 35,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 12,
+					value: 5,
+					label: "Dawn Pharmaceuticals",
+					type: "company",
+					info: [
+							{
+								name: "4503",
+								quantity: 31,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Arbitration Awards",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 17,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 6,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Formal Complaints",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 19,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 98,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 15,
+					value: 3,
+					label: "Vaccines 'R' Us",
+					type: "company",
+					info: [
+							{
+								name: "4503",
+								quantity: 31,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Arbitration Awards",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 17,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 6,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Formal Complaints",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 19,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 98,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 20,
+					value: 6,
+					label: "Apple",
+					type: "company",
+					info: [
+							{
+								name: "4503",
+								quantity: 31,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Arbitration Awards",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 17,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 6,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Formal Complaints",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 19,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 98,
+								url: "https://www.finra.org",
+							},
+						]
+				},
+				
+				{
+					id: 21,
+					value: 5,
+					label: "IBM",
+					type: "company",
+					info: [
+							{
+								name: "4503",
+								quantity: 31,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Arbitration Awards",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "CRD Rep Disclosures",
+								quantity: 17,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Form D",
+								quantity: 6,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Formal Complaints",
+								quantity: 1,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "NCFCD Referrals",
+								quantity: 2,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "Pleadings",
+								quantity: 19,
+								url: "https://www.finra.org",
+							},
+							{
+								name: "STAR Matters",
+								quantity: 98,
+								url: "https://www.finra.org",
+							},
+						]
+				},
 			];
 			
-			let edges = [
-                { from:  5, to:  3, value: 5, label: "mentions" },
-                { from:  5, to:  4, value: 2, label: "relates to" },
-                { from:  3, to:  4, value: 2, label: "employed by" },
-                { from:  6, to:  4, value: 1, label: "mentions" },
-                { from:  4, to:  1, value: 1, label: "contacts" },
-                { from:  4, to: 11, value: 1, label: "trades with" },
-                { from:  2, to:  4, value: 1, label: "employed by" },
-                { from:  2, to:  9, value: 1, label: "contacts" },
-                { from:  4, to: 10, value: 9, label: "owns" },
-                { from: 14, to: 10, value: 1, label: "employed by" },
-                { from: 13, to: 10, value: 1, label: "employed by" },
-                { from: 11, to: 10, value: 2, label: "trades with" },
-                { from:  8, to: 10, value: 1, label: "relates to" },
-                { from:  8, to: 12, value: 2, label: "mentions" },
-                { from:  7, to: 16, value: 3, label: "contacts" },
-                { from: 16, to: 19, value: 4, label: "employed by" },
-                { from: 19, to: 21, value: 5, label: "trades" },
-                { from: 12, to: 19, value: 1, label: "trades with" },
-                { from: 19, to: 20, value: 4, label: "trades" },
-                { from: 18, to: 20, value: 1, label: "owns stock in" },
-                { from: 19, to: 10, value: 7, label: "sued in 2017" },
-                { from:  4, to: 15, value: 1, label: "trades" },
-                { from: 18, to: 15, value: 1, label: "owns stock in" },
-                { from: 17, to: 19, value: 4, label: "references" },
-                { from: 17, to: 18, value: 1, label: "references" }
+			let edges_full = [
+				{ id:  1, from:  3, to:  4, value: 2, label: "employed by", description: "Luis Martinez has been a registered representative at Medmen Enterprises Inc. since March 2018." },
+				{ id:  2, from:  4, to:  1, value: 1, label: "litigation", description: "Medmen Enterprises sued OPNT in 2017 over trade disputes.  <a href='https://www.finra.org'>Read the Article</a>" },
+				{ id:  3, from: 11, to:  4, value: 1, label: "parent of", description: "ACB is the parent company of Medmen Enterprises Inc." },
+				{ id:  4, from:  2, to:  4, value: 1, label: "employed by", description: "Parker Rodriguez has been a supervisor at Medmen Enterprises Inc. since 2008." },
+				{ id:  5, from:  4, to: 10, value: 9, label: "trades", description: "Medmen Enterprises often trades Aurora Chemicals securities." },
+				{ id:  6, from: 14, to: 10, value: 1, label: "employed by", description: "Eli Martinelli is a sales representative at Aurora Chemicals.  View Eli Martinelli's <a href='https://www.finra.org'>LinkedIn profile.</a>" },
+				{ id:  7, from: 13, to: 10, value: 1, label: "filed complaint", description: "Jack Roberts filed a complaint against Aurora Chemicals in November 2009.  <a href='https://www.finra.org'>Read the Article</a>" },
+				{ id:  8, from: 11, to: 10, value: 2, label: "trades", description: "ACB trades Aurora Chemicals securities." },
+				{ id:  9, from:  7, to: 16, value: 3, label: "filed complaint", description: "Jessica Powers filed a complaint against registered representative Eugene Mendel in February 2020." },
+				{ id: 10, from: 16, to: 19, value: 4, label: "employed by", description: "Eugene Mendel has been a registered representative at Charles Schwab & Co. Inc. since April 2019." },
+				{ id: 11, from: 19, to: 21, value: 5, label: "trades", description: "Charles Schwab trades IBM securities." },
+				{ id: 12, from: 19, to: 12, value: 1, label: "trades", description: "Charles Schwab trades Dawn Pharmaceuticals securities." },
+				{ id: 13, from: 19, to: 20, value: 4, label: "trades", description: "Charles Schwab trades Apple securities." },
+				{ id: 14, from: 18, to: 20, value: 1, label: "owns stock in", description: "Harold Watkins owns stock in Apple." },
+				{ id: 15, from: 19, to: 10, value: 7, label: "sued in 2017", description: "Charles Schwab sued Aurora Chemicals in 2017 over an alleged fraud.  <a href='https://www.finra.org'>Read the Article</a>" },
+				{ id: 16, from:  4, to: 15, value: 1, label: "trades", description: "Medmen Enterprises trades Vaccines 'R' Us securities." },
+				{ id: 17, from: 18, to: 15, value: 1, label: "employed by", description: "Harold Watkins is a medical technitian at Vaccines 'R' Us.  View Harold Watkins's <a href='https://www.finra.org'>LinkedIn profile.</a>" },
 			];
+			
+			// create a button that when you press it it changes the node graph to something completely different
 			
 			// create a network
 			var container = document.getElementById("mynetwork");
 			console.log(container);
 			var data = {
-			  nodes: nodes,
-			  edges: edges,
+			  nodes: nodes_full,
+			  edges: edges_full,
 			};
 			var options = {
+			  // Style the nodes
 			  nodes: {
 				shape: "dot",
 				font: {
@@ -104,6 +775,8 @@
 				},
 				borderWidth: 2,
 			  },
+			  
+			  // Style the edges
 			  edges: {
 				width: 2,
 				font: { 
@@ -117,9 +790,28 @@
 				scaling: { label: {enabled: false } },
 				arrows: "to",
 			  },
+			  
+			  physics: { 
+					enabled: true,
+					solver: "repulsion", // I found this solver displayed better than the default
+					minVelocity: 0.05 // I thought the default value made the graph "screech to a halt" unnaturally so I lowered it slightly
+				},
 			};
 			
 			network = new vis.Network(container, data, options);
+			drawSidePanel(nodes_full, edges_full);
+			
+			// This part creates the left side panel
+			function drawSidePanel(nodes, edges) {
+				let $c = $("#edgecontainer");
+				let $ul = $(document.createElement("ul"));
+				for (edge of edges) {
+					console.log(edge.description);
+					$ul.append("<li>" + edge.description + "</li>")
+				}
+				$c.append($ul);
+			}
+			
 		</script>
 	</body>
 </html>
