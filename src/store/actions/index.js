@@ -7,5 +7,8 @@ export {
     clearVis,
     showNodes,
     showEdges,
-    changeFontSize
+    changeFontSize,
+    fetchData,
+    fetchDataStart,
+    fetchDataSuccess
 } from './node';

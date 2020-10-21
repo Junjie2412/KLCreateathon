@@ -9,14 +9,17 @@ const initialState = {
     searchedLinks: [],
     searchValue: "",
     numConnections: 1,
-    nodesVis: JSON.parse(JSON.stringify(nodesDataVis)),
-    edgesVis: JSON.parse(JSON.stringify(linksDataVis)),
+    //nodesVis: JSON.parse(JSON.stringify(nodesDataVis)),
+    //edgesVis: JSON.parse(JSON.stringify(linksDataVis)),
+    nodesVis: [],
+    edgesVis: [],
     searchedNodesVis: [],
     searchedEdgesVis: [],
     showNodes: true,
     showEdges: true,
     currentFontSize: "Large",
-    fontOptions: ["Small", "Medium", "Large"]
+    fontOptions: ["Small", "Medium", "Large"],
+    loading: false
 };
 
 const search = (state, action) => {
@@ -173,6 +176,18 @@ const changeFontSize = (state, action) => {
     })
 };
 
+const fetchDataStart = (state, action) => {
+    return updateObject(state, {loading: true})
+};
+
+const fetchDataSuccess = (state, action) => {
+    return updateObject(state, {
+        loading: false,
+        nodesVis: action.nodes,
+        edgesVis: action.edges
+    })
+};
+
 const reducer = ( state = initialState, action ) => {
     switch(action.type) {
         case actionTypes.SEARCH: return search(state, action);
@@ -184,6 +199,8 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.SHOW_NODES: return showNodes(state, action);
         case actionTypes.SHOW_EDGES: return showEdges(state, action);
         case actionTypes.CHANGE_FONT_SIZE: return changeFontSize(state, action);
+        case actionTypes.FETCH_DATA_START: return fetchDataStart(state, action);
+        case actionTypes.FETCH_DATA_SUCCESS: return fetchDataSuccess(state, action);
         default:
             return state;
     }

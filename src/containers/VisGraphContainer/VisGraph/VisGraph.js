@@ -3,8 +3,13 @@ import React, {Component} from 'react';
 import connect from "react-redux/es/connect/connect";
 import './VisGraph.css';
 import { Network, Node, Edge } from 'react-vis-network';
+import * as actions from '../../../store/actions/index';
 
 class VisGraph extends Component {
+
+    componentDidMount() {
+        this.props.onFetchData();
+    }
 
     render() {
 
@@ -85,6 +90,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onFetchData: () => dispatch(actions.fetchData())
     };
 };
 

@@ -1,4 +1,6 @@
 import * as actionTypes from './actionTypes';
+import axios from 'axios';
+import * as links from '../../shared/links';
 
 export const search = (searchTerm, numConnections) => {
     return {
@@ -62,5 +64,41 @@ export const changeFontSize = (fontSize) => {
     return {
         type: actionTypes.CHANGE_FONT_SIZE,
         fontSize: fontSize
+    }
+};
+
+export const fetchDataStart = () => {
+    return {
+        type: actionTypes.FETCH_DATA_START
+    }
+};
+
+export const fetchDataSuccess = (nodes, edges) => {
+    return {
+        type: actionTypes.FETCH_DATA_SUCCESS,
+        nodes: nodes,
+        edges: edges
+    }
+};
+
+export const fetchData = () => {
+    return dispatch => {
+        dispatch(fetchDataStart());
+        axios.get(links.FETCH_DATA_LOCAL)
+            .then(response => {
+                const nodes = [];
+                const edges = [];
+                for (let node in response.data.nodes) {
+                    nodes.push( {
+                        ...response.data.nodes[node]
+                    })
+                }
+                for (let edge in response.data.edges) {
+                    edges.push( {
+                        ...response.data.edges[edge]
+                    })
+                }
+                dispatch(fetchDataSuccess(nodes, edges));
+            })
     }
 };
