@@ -20,7 +20,12 @@ const initialState = {
     currentFontSize: "Large",
     fontOptions: ["Small", "Medium", "Large"],
     loading: false,
-    selectedEdge: ""
+    selectedEdge: "",
+    selectedNode: {
+        properties: {
+
+        }
+    }
 };
 
 const search = (state, action) => {
@@ -103,8 +108,6 @@ const searchVis = (state, action) => {
     let targets = [];
 
     let searchedNodeVis = action.nodesList.find(node => node.label===action.searchTerm);
-
-    console.log(searchedNodeVis);
 
     if (searchedNodeVis != null) {
         newSearchedNodesVis.push(searchedNodeVis);
@@ -195,6 +198,12 @@ const selectEdgeFromList = (state, action) => {
     })
 };
 
+const selectNode = (state, action) => {
+    return updateObject(state, {
+        selectedNode: action.selectedNode
+    })
+};
+
 const reducer = ( state = initialState, action ) => {
     switch(action.type) {
         case actionTypes.SEARCH: return search(state, action);
@@ -209,6 +218,7 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.FETCH_DATA_START: return fetchDataStart(state, action);
         case actionTypes.FETCH_DATA_SUCCESS: return fetchDataSuccess(state, action);
         case actionTypes.SELECT_EDGE_FROM_LIST: return selectEdgeFromList(state, action);
+        case actionTypes.SELECT_NODE: return selectNode(state, action);
         default:
             return state;
     }

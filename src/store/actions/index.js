@@ -11,5 +11,6 @@ export {
     fetchData,
     fetchDataStart,
     fetchDataSuccess,
-    selectEdgeFromList
+    selectEdgeFromList,
+    selectNode
 } from './node';

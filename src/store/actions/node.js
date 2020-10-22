@@ -114,3 +114,10 @@ export const selectEdgeFromList = (selectedEdge) => {
         selectedEdge: selectedEdge
     }
 };
+
+export const selectNode = (selectedNode) => {
+    return {
+        type: actionTypes.SELECT_EDGE_FROM_LIST,
+        selectedNode: selectedNode
+    }
+};

@@ -27,6 +27,7 @@ class Search extends Component {
     editNumConnections = (event) => {
         event.preventDefault();
         this.props.onEditNumConnections(event.target.value);
+        this.props.onSearchVis(this.props.searchValue, event.target.value, this.props.nodesVis, this.props.edgesVis);
     };
 
     clickSearchDropDown = (event, search) => {
@@ -84,16 +85,19 @@ class Search extends Component {
                 <div className={"searchBox"} id={"searchBox"} onClick={this.closeSearchList}>
                     {!this.props.loading ?
                     <Aux>
-                    <form action="/action_page.php" onSubmit={(event) => this.search(event)}>
+                    <form onSubmit={(event) => this.search(event)}>
                         <input type="text" autoComplete="off" placeholder="Search.." name="search" value={this.props.searchValue} onChange={(event) => this.editSearch(event)}/>
 
                         <ul style={{"display":this.state.showList ? "block" : "none"}} className={"searchList"}>
                             {searchList}
                         </ul>
-                        <p>Connections: </p>
-                        <input type="number" autoComplete="off" placeholder="Number of Connections" name="search"
-                               value={this.props.numConnections} onChange={(event) => this.editNumConnections(event)} min="1"/>
+                        <div>
+                            <p>Connections: </p>
+                            <input type="number" autoComplete="off" placeholder="Number of Connections" name="search"
+                                   value={this.props.numConnections} onChange={(event) => this.editNumConnections(event)} min="1"/>
+                        </div>
                     </form>
+
 
                     <Form className={"checkBox"}>
                         <Form.Group controlId="showNodesSwitch">

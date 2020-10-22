@@ -1,11 +1,10 @@
 .searchBox {
     width: 20%;
-    float: left;
-    clear: none;
     background-color: #e5e8ec;
     position: absolute;
     z-index: 2000;
     padding-bottom: 0;
+    text-align: left;
 }
 
 .searchBox .search-container {
@@ -13,7 +12,7 @@
 }
 
 .searchBox input[type=text] {
-    float: left;
+    display: block;
     padding: 6px;
     margin: 8px 0 0 20px;
     font-size: 17px;
@@ -21,17 +20,17 @@
 }
 
 .searchBox p {
-    float: left;
     color: black;
     padding: 12px 10px 4px 20px;
     font-size: 17px;
     text-align: left;
     margin-bottom: 0;
     font-family: 'Open Sans', sans-serif;
+    display: inline-block;
 }
 
 .searchBox input[type=number] {
-    float: left;
+    display: inline-block;
     padding: 6px;
     margin-top: 8px;
     font-size: 17px;
@@ -41,12 +40,13 @@
 
 .searchList {
     position: absolute;
+    display: block;
     color: black;
     list-style-type: none;
     width: 209px;
     z-index: 1500;
     background-color: white;
-    margin: 50px 0 0 20px;
+    margin: 0 0 0 20px;
     padding: 0;
     height: 100%;
     overflow-y: scroll;
@@ -65,15 +65,14 @@
 }
 
 .checkBox {
-    float: left;
     margin: 0 0 0 20px;
     font-size: 17px;
     border: none;
+    display: block;
 }
 
 .checkBox Form.Group, Form.Check {
     color: black;
-    float: left;
     padding: 6px;
     margin: 8px 0 0 10px;
     font-size: 17px;
@@ -81,7 +80,6 @@
 }
 
 .dropdown {
-     float: left;
      padding: 6px;
      margin: 0 0 0 50px;
      font-size: 17px;
@@ -103,7 +101,6 @@
 }
 
 .select {
-    float: left;
     margin: 0 0 15px 15px;
     font-size: 17px;
     text-align: left;
