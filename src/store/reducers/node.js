@@ -143,8 +143,6 @@ const searchVis = (state, action) => {
                     newSearchedNodesVis.push(node);
                 }
             }
-            console.log(newSearchedNodesVis);
-            console.log(newSearchedEdgesVis);
         }
     }
 

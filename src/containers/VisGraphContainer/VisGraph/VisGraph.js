@@ -5,8 +5,6 @@ import './VisGraph.css';
 import { Network, Node, Edge } from 'react-vis-network';
 import * as actions from '../../../store/actions/index';
 import Search from '../../../components/Search/Search';
-import ReactHtmlParser from 'react-html-parser';
-import {nodesData} from "../../../shared/data";
 
 class VisGraph extends Component {
 
@@ -41,11 +39,9 @@ class VisGraph extends Component {
             edges: {
                 width: 2,
                 color: {
-                    color:'#848484',
-                    highlight:'#848484',
-                    hover: '#848484',
+                    color:'#666',
                     inherit: 'from',
-                    opacity:1.0
+                    opacity: 1.0
                 },
                 font: {
                     size: this.props.showEdges ? 10 : 0,
@@ -56,13 +52,13 @@ class VisGraph extends Component {
                     strokeWidth: 8,
                 },
                 scaling: { label: {enabled: false } },
-                arrows: "to"
+                arrows: "to",
+                arrowStrikethrough: false
             },
             manipulation: {
                 deleteNode: true,
                 deleteEdge: true
             },
-            arrowStrikethrough: false,
             physics: {
                 enabled: true,
                 solver: "repulsion", // I found this solver displayed better than the default
@@ -85,7 +81,17 @@ null = #919191
             3:"#eb9c00",
             2:"#8f751e",
             1:"#635d4b",
-            0:"#919191"
+            0:"#ccc"
+        };
+
+        let Decorator = props => {
+            return (
+                <button
+                    onClick={() => this.props.onSelectNode(this.props.searchedNodesVis.find(node => node.id===props.id))}
+                >
+                    View Info
+                </button>
+            );
         };
 
         let nodesList = this.props.searchedNodesVis.map(node => (
@@ -94,17 +100,17 @@ null = #919191
                 id={node.id}
                 label={node.label}
                 value={node.value }
-                color={node.properties.risk_code ? (riskColors[node.properties.risk_code]) : "#919191"}
-                font={node.properties.risk_code ? ({color:riskColors[node.properties.risk_code]}) : {color:"#919191"}}
-                onClick={() => this.props.onSelectNode(node)}
+                color={node.properties.risk_code ? (riskColors[node.properties.risk_code]) : "#ccc"}
+                font={node.properties.risk_code ? ({color:riskColors[node.properties.risk_code]}) : {color:"#ccc"}}
                 shape = {(node.type==="Individual"||node.type==="Firm")?"icon":"dot"}
                 icon={{
                     face: "'Font Awesome 5 Free'",
                     weight: "900", // Font Awesome 5 doesn't work properly unless bold.
                     code: node.type==="Individual" ? "\uf007" : (node.type==="Firm" ? "\uf1ad" : ""),
                     size: 50,
-                    color: node.properties.risk_code ? (riskColors[node.properties.risk_code]) : "#919191"
+                    color: node.properties.risk_code ? (riskColors[node.properties.risk_code]) : "#ccc"
                 }}
+                decorator={Decorator}
             />
         ));
 
@@ -116,18 +122,26 @@ null = #919191
                 to={edge.to}
                 from={edge.from}
                 value={edge.value}
-                color={edge.id===this.props.selectedEdge ? {color:"white"} : ""}
+                color={edge.id===this.props.selectedEdge ? {color:"white", highlight:"white"} : ""}
                 font={edge.id===this.props.selectedEdge ? {strokeColor:"#6c757d", } : ""}
             />
         ));
 
         let edgeDescriptions = this.props.searchedEdgesVis.map(edge => (
-            <li key={edge.id} onClick={() => this.props.onSelectEdgeFromList(edge.id)} style={{backgroundColor : edge.id===this.props.selectedEdge ? "#818d96" : ""}}>
-                {/*{ReactHtmlParser(edge.description)}*/}
-                {this.props.searchedNodesVis.find(node => node.id===edge.from).label+" "+edge.label+" "+this.props.searchedNodesVis.find(node => node.id===edge.to).label}
-            </li>
+                <li key={edge.id} onClick={() => this.props.onSelectEdgeFromList(edge.id)} style={{backgroundColor : edge.id===this.props.selectedEdge ? "#818d96" : ""}}>
+                    {/*{ReactHtmlParser(edge.description)}*/}
+                    {this.props.searchedNodesVis.find(node => node.id===edge.from).label+" "+edge.label+" "+this.props.searchedNodesVis.find(node => node.id===edge.to).label}
+                </li>
             )
         );
+
+        let events = {
+            select: function(event) {
+                let { nodes, edges } = event;
+                console.log(nodes);
+                console.log(edges)
+            }
+        };
 
         return (
             <div>
@@ -141,21 +155,22 @@ null = #919191
                 </div>
                 <div id={"mynetwork"}>
                     <Network
-                        options={options}>
+                        options={options}
+                        events={events}
+                    >
                         {nodesList}
                         {edgesList}
                     </Network>
                 </div>
                 <div id="nodepanel" className="panel">
-                    <div id="nodecontainer" className="panelcontainer">{/*
-                        <h1>
-
-                        </h1>
+                    <div id="nodecontainer" className="panelcontainer">
+                        <h3 style={{color: "white"}}>
+                            {this.props.selectedNode.label}
+                        </h3>
                         <ul>
-                            <li>
-
-                            </li>
-                        </ul>*/}
+                            <li>CRD#: {this.props.selectedNode.properties ? this.props.selectedNode.properties.crd : ""}</li>
+                            <li style={{color: "white"}}> {this.props.selectedNode.properties ? this.props.selectedNode.properties.risk_code : ""} </li>
+                        </ul>
                     </div>
                 </div>
             </div>

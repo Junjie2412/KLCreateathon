@@ -88,7 +88,6 @@ export const fetchData = () => {
         dispatch(fetchDataStart());
         axios.get(links.FETCH_DATA_LOCAL)
             .then(response => {
-                console.log(response);
                 const nodes = [];
                 const edges = [];
                 for (let node in response.data.nodes) {
@@ -101,8 +100,6 @@ export const fetchData = () => {
                         ...response.data.edges[edge]
                     })
                 }
-                console.log(nodes);
-                console.log(edges);
                 dispatch(fetchDataSuccess(nodes, edges));
             })
     }
@@ -117,7 +114,7 @@ export const selectEdgeFromList = (selectedEdge) => {
 
 export const selectNode = (selectedNode) => {
     return {
-        type: actionTypes.SELECT_EDGE_FROM_LIST,
+        type: actionTypes.SELECT_NODE,
         selectedNode: selectedNode
     }
 };

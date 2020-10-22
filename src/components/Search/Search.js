@@ -43,7 +43,6 @@ class Search extends Component {
     };
 
     showNodes = () => {
-        console.log("show nodes");
         if (this.props.showNodes === true) {
             this.props.onShowNodes(false);
         } else {
@@ -52,7 +51,6 @@ class Search extends Component {
     };
 
     showEdges = () => {
-        console.log("show edges");
         if (this.props.showEdges === true) {
             this.props.onShowEdges(false);
         } else {
